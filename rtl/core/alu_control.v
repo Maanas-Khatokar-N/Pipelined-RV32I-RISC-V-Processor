@@ -20,7 +20,7 @@ module alu_control (
                     case (funct3)
                         000:    if (funct7 == 7'b0000000) ALUControl = 4'b0;            //Add
                                 else if (funct7 == 7'b0100000) ALUControl = 4'b1;       //Sub
-                                else ALUControl = 4'b0;
+                                else ALUControl = 4'bx;
 
                         111: ALUControl = 4'b2;            //And
                         110: ALUControl = 4'b3;            //Or
