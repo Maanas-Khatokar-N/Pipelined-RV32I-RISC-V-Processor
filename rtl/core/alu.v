@@ -4,14 +4,14 @@ module alu (
     output reg [31:0] result,
     output zero
 );
-    parameter ADD = 4'b0;
-    parameter SUB = 4'b1;
+    parameter ADD = 4'd0;
+    parameter SUB = 4'd1;
 
-    parameter AND = 4'b2;
-    parameter OR = 4'b3;
-    parameter XOR = 4'b4;
+    parameter AND = 4'd2;
+    parameter OR = 4'd3;
+    parameter XOR = 4'd4;
 
-    parameter SLT = 4'b5;
+    parameter SLT = 4'd5;
 
     
     always @(*) begin
