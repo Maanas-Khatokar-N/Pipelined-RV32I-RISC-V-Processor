@@ -1,1 +1,9 @@
 Reference/
+
+# Simulation Outputs
+*.vcd
+*.vvp
+
+# Build Folders
+sim/build/
+sim/waveforms/
