@@ -8,15 +8,14 @@ module alu_control (
     always @(*) begin
         
         case (ALUop)
-            //load,store,addi -> ADD
+            //load,store -> ADD
             2'b00: ALUControl = 4'd0;      
 
             //branch -> SUB
             2'b01: ALUControl = 4'd1;      
 
-            //All funct3-based ALU decoding
-            2'b10:
-                begin                   
+            //R-Type
+            2'b10: begin                   
                     case (funct3)
                         3'b000:    if (funct7 == 7'b0000000) ALUControl = 4'd0;            //Add
                                 else if (funct7 == 7'b0100000) ALUControl = 4'd1;       //Sub
@@ -29,9 +28,18 @@ module alu_control (
 
                         default: ALUControl = 4'bx;
                     endcase
-                end
+            end
 
-            2'b11: ALUControl = 4'bx;
+            //I-Type
+            2'b11: begin
+                    case (funct3)
+                        3'b000: ALUControl = 4'd0;            //Addi
+                        3'b111: ALUControl = 4'd2;            //Andi
+                        3'b110: ALUControl = 4'd3;            //Ori
+
+                        default: ALUControl = 4'bx;
+                    endcase
+            end
 
             default: ALUControl = 4'bx;
         endcase
