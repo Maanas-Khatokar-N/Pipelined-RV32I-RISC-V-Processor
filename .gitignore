@@ -3,6 +3,7 @@ Reference/
 # Simulation Outputs
 *.vcd
 *.vvp
+*.out
 
 # Build Folders
 sim/build/
