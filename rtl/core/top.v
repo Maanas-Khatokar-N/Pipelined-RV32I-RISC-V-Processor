@@ -51,4 +51,16 @@ module top (
 
     alu_control ac (.ALUOp(ALUOp), .funct3(funct3), .funct7(funct7), .ALUControl(ALUControl));
 
+
+
+    //Execution (EX)
+
+    wire [31:0] out_data;
+    mux2_32 alu_sel (.a(read_data2), .b(imm), .sel(ALUSrc), .y(out_data));
+
+    wire [31:0] alu_result;
+    wire zero;
+    alu a1 (.A(read_data1), .B(out_data), .ALUControl(ALUControl), .result(alu_result), .zero(zero));
+
+
 endmodule
