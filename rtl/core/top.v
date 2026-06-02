@@ -55,12 +55,22 @@ module top (
 
     //Execution (EX)
 
-    wire [31:0] out_data;
-    mux2_32 alu_sel (.a(read_data2), .b(imm), .sel(ALUSrc), .y(out_data));
+    wire [31:0] mux_alu_out_data;
+    mux2_32 alu_sel (.a(read_data2), .b(imm), .sel(ALUSrc), .y(mux_alu_out_data));
 
     wire [31:0] alu_result;
     wire zero;
-    alu a1 (.A(read_data1), .B(out_data), .ALUControl(ALUControl), .result(alu_result), .zero(zero));
+    alu a1 (.A(read_data1), .B(mux_alu_out_data), .ALUControl(ALUControl), .result(alu_result), .zero(zero));
+
+
+
+    //Memory Access (MEM)
+
+    wire [31:0] mem_rd_data;
+
+    data_memory dm (.clk(clk), .MemRead(MemRead), .MemWrite(MemWrite), .addr(alu_result), .write_data(read_data2), .read_data(mem_rd_data));
+
+    mux2_32 write_sel (.a(alu_result), .b(mem_rd_data), .sel(MemToReg), .y(write_data));
 
 
 endmodule
