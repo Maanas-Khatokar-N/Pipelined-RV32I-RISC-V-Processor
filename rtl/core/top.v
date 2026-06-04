@@ -116,7 +116,7 @@ module top (
     );
 
     alu_control ac (
-        .ALUOp(ALUOp),
+        .ALUop(ALUOp),
         .funct3(funct3),
         .funct7(funct7),
         .ALUControl(ALUControl)
