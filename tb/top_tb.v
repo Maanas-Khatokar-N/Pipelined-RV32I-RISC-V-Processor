@@ -4,7 +4,7 @@ module top_tb;
 
     reg clk, rst;
 
-    top dut (
+    pipelined_top dut (
         .clk(clk),
         .rst(rst)
     );

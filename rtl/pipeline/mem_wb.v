@@ -1,383 +1,63 @@
-module pipelined_top (
+module mem_wb (
     input clk,
-    input rst
+    input rst,
+
+    input stall,
+    input flush,
+
+    input [31:0] read_data_in,
+    input [31:0] alu_result_in,
+    input [31:0] pc_plus4_in,
+    input [4:0] rd_in,
+
+    input RegWrite_in,
+    input MemToReg_in,
+    input Jump_in,
+
+
+    output reg [31:0] read_data_out,
+    output reg [31:0] alu_result_out,
+    output reg [31:0] pc_plus4_out,
+    output reg [4:0] rd_out,
+
+    output reg RegWrite_out,
+    output reg MemToReg_out,
+    output reg Jump_out
 );
 
-    // ============================================================
-    // IF Stage Wires
-    // ============================================================
-
-    wire [31:0] pc;
-    wire [31:0] pc_plus4;
-    wire [31:0] pc_next;
-    wire [31:0] inst;
-
-    wire stall;
-    wire flush;
-
-    assign stall = 1'b0;   // no hazard unit yet
-
-
-    // ============================================================
-    // IF Stage: Instruction Fetch
-    // ============================================================
-
-    adder pc_adder (
-        .a(pc),
-        .b(32'd4),
-        .sum(pc_plus4)
-    );
-
-    program_counter pc_reg (
-        .clk(clk),
-        .rst(rst),
-        .pc_next(pc_next),
-        .pc(pc)
-    );
-
-    instruction_memory inst_mem (
-        .pc(pc),
-        .inst(inst)
-    );
-
-
-    // ============================================================
-    // IF/ID Pipeline Register
-    // ============================================================
-
-    wire [31:0] if_id_pc;
-    wire [31:0] if_id_pc_plus4;
-    wire [31:0] if_id_inst;
-
-    if_id if_id_latch (
-        .clk(clk),
-        .rst(rst),
-        .stall(stall),
-        .flush(flush),
-
-        .pc_in(pc),
-        .pc_plus4_in(pc_plus4),
-        .inst_in(inst),
-
-        .pc_out(if_id_pc),
-        .pc_plus4_out(if_id_pc_plus4),
-        .inst_out(if_id_inst)
-    );
-
-
-    // ============================================================
-    // ID Stage: Instruction Decode / Register Fetch
-    // ============================================================
-
-    wire [6:0] id_opcode;
-    wire [4:0] id_rd, id_rs1, id_rs2;
-    wire [2:0] id_funct3;
-    wire [6:0] id_funct7;
-
-    wire [31:0] id_imm;
-    wire [31:0] id_read_data1, id_read_data2;
-
-    wire id_RegWrite, id_ALUSrc, id_MemRead, id_MemWrite, id_MemToReg;
-    wire id_Branch, id_Jump;
-    wire [1:0] id_ALUOp;
-
-    assign id_opcode = if_id_inst[6:0];
-    assign id_rd     = if_id_inst[11:7];
-    assign id_funct3 = if_id_inst[14:12];
-    assign id_rs1    = if_id_inst[19:15];
-    assign id_rs2    = if_id_inst[24:20];
-    assign id_funct7 = if_id_inst[31:25];
-
-    control_unit cu (
-        .opcode(id_opcode),
-        .RegWrite(id_RegWrite),
-        .ALUSrc(id_ALUSrc),
-        .MemRead(id_MemRead),
-        .MemWrite(id_MemWrite),
-        .MemToReg(id_MemToReg),
-        .Branch(id_Branch),
-        .Jump(id_Jump),
-        .ALUOp(id_ALUOp)
-    );
-
-    imm_gen ig (
-        .inst(if_id_inst),
-        .imm_out(id_imm)
-    );
-
-
-    // ============================================================
-    // WB Wires
-    // These are declared here because register_file needs them
-    // ============================================================
-
-    wire wb_RegWrite;
-    wire [4:0] wb_rd;
-    wire [31:0] wb_write_data;
-
-
-    register_file rf (
-        .clk(clk),
-        .rst(rst),
-
-        .rs1(id_rs1),
-        .rs2(id_rs2),
-        .rd(wb_rd),
-
-        .write_data(wb_write_data),
-        .write_en(wb_RegWrite),
-
-        .read_data1(id_read_data1),
-        .read_data2(id_read_data2)
-    );
-
-
-    // ============================================================
-    // ID/EX Pipeline Register
-    // ============================================================
-
-    wire [31:0] id_ex_pc;
-    wire [31:0] id_ex_pc_plus4;
-    wire [31:0] id_ex_read_data1;
-    wire [31:0] id_ex_read_data2;
-    wire [31:0] id_ex_imm;
-
-    wire [4:0] id_ex_rs1, id_ex_rs2, id_ex_rd;
-    wire [2:0] id_ex_funct3;
-    wire [6:0] id_ex_funct7;
-
-    wire id_ex_RegWrite, id_ex_ALUSrc, id_ex_MemRead, id_ex_MemWrite, id_ex_MemToReg;
-    wire id_ex_Branch, id_ex_Jump;
-    wire [1:0] id_ex_ALUOp;
-
-    id_ex id_ex_latch (
-        .clk(clk),
-        .rst(rst),
-        .stall(stall),
-        .flush(flush),
-
-        .pc_in(if_id_pc),
-        .pc_plus4_in(if_id_pc_plus4),
-        .read_data1_in(id_read_data1),
-        .read_data2_in(id_read_data2),
-        .imm_in(id_imm),
-
-        .rs1_in(id_rs1),
-        .rs2_in(id_rs2),
-        .rd_in(id_rd),
-
-        .funct3_in(id_funct3),
-        .funct7_in(id_funct7),
-
-        .RegWrite_in(id_RegWrite),
-        .ALUSrc_in(id_ALUSrc),
-        .MemRead_in(id_MemRead),
-        .MemWrite_in(id_MemWrite),
-        .MemToReg_in(id_MemToReg),
-        .Branch_in(id_Branch),
-        .Jump_in(id_Jump),
-        .ALUOp_in(id_ALUOp),
-
-        .pc_out(id_ex_pc),
-        .pc_plus4_out(id_ex_pc_plus4),
-        .read_data1_out(id_ex_read_data1),
-        .read_data2_out(id_ex_read_data2),
-        .imm_out(id_ex_imm),
-
-        .rs1_out(id_ex_rs1),
-        .rs2_out(id_ex_rs2),
-        .rd_out(id_ex_rd),
-
-        .funct3_out(id_ex_funct3),
-        .funct7_out(id_ex_funct7),
-
-        .RegWrite_out(id_ex_RegWrite),
-        .ALUSrc_out(id_ex_ALUSrc),
-        .MemRead_out(id_ex_MemRead),
-        .MemWrite_out(id_ex_MemWrite),
-        .MemToReg_out(id_ex_MemToReg),
-        .Branch_out(id_ex_Branch),
-        .Jump_out(id_ex_Jump),
-        .ALUOp_out(id_ex_ALUOp)
-    );
-
-
-    // ============================================================
-    // EX Stage: Execute / Address Calculation
-    // ============================================================
-
-    wire [3:0] ex_ALUControl;
-    wire [31:0] ex_alu_src_b;
-    wire [31:0] ex_alu_result;
-    wire ex_zero;
-
-    wire [31:0] ex_pc_target;
-    wire ex_branch_taken;
-
-    alu_control ac (
-        .ALUOp(id_ex_ALUOp),
-        .funct3(id_ex_funct3),
-        .funct7(id_ex_funct7),
-        .ALUControl(ex_ALUControl)
-    );
-
-    mux2_32 alu_src_mux (
-        .a(id_ex_read_data2),
-        .b(id_ex_imm),
-        .sel(id_ex_ALUSrc),
-        .y(ex_alu_src_b)
-    );
-
-    alu alu_unit (
-        .A(id_ex_read_data1),
-        .B(ex_alu_src_b),
-        .ALUControl(ex_ALUControl),
-        .result(ex_alu_result),
-        .zero(ex_zero)
-    );
-
-    adder branch_jump_adder (
-        .a(id_ex_pc),
-        .b(id_ex_imm),
-        .sum(ex_pc_target)
-    );
-
-    assign ex_branch_taken =
-        id_ex_Branch &&
-        (
-            (id_ex_funct3 == 3'b000 &&  ex_zero) ||   // beq
-            (id_ex_funct3 == 3'b001 && !ex_zero)      // bne
-        );
-
-    assign flush = ex_branch_taken || id_ex_Jump;
-
-    mux2_32 pc_next_mux (
-        .a(pc_plus4),
-        .b(ex_pc_target),
-        .sel(flush),
-        .y(pc_next)
-    );
-
-
-    // ============================================================
-    // EX/MEM Pipeline Register
-    // ============================================================
-
-    wire [31:0] ex_mem_pc_target;
-    wire [31:0] ex_mem_pc_plus4;
-    wire [31:0] ex_mem_alu_result;
-    wire [31:0] ex_mem_write_data;
-    wire [4:0] ex_mem_rd;
-
-    wire ex_mem_RegWrite, ex_mem_MemRead, ex_mem_MemWrite, ex_mem_MemToReg;
-    wire ex_mem_Branch, ex_mem_Jump;
-
-    ex_mem ex_mem_latch (
-        .clk(clk),
-        .rst(rst),
-
-        .pc_target_in(ex_pc_target),
-        .pc_plus4_in(id_ex_pc_plus4),
-        .alu_result_in(ex_alu_result),
-        .write_data_in(id_ex_read_data2),
-        .rd_in(id_ex_rd),
-
-        .RegWrite_in(id_ex_RegWrite),
-        .MemRead_in(id_ex_MemRead),
-        .MemWrite_in(id_ex_MemWrite),
-        .MemToReg_in(id_ex_MemToReg),
-        .Branch_in(id_ex_Branch),
-        .Jump_in(id_ex_Jump),
-
-        .pc_target_out(ex_mem_pc_target),
-        .pc_plus4_out(ex_mem_pc_plus4),
-        .alu_result_out(ex_mem_alu_result),
-        .write_data_out(ex_mem_write_data),
-        .rd_out(ex_mem_rd),
-
-        .RegWrite_out(ex_mem_RegWrite),
-        .MemRead_out(ex_mem_MemRead),
-        .MemWrite_out(ex_mem_MemWrite),
-        .MemToReg_out(ex_mem_MemToReg),
-        .Branch_out(ex_mem_Branch),
-        .Jump_out(ex_mem_Jump)
-    );
-
-
-    // ============================================================
-    // MEM Stage: Data Memory Access
-    // ============================================================
-
-    wire [31:0] mem_read_data;
-
-    data_memory dm (
-        .clk(clk),
-        .MemRead(ex_mem_MemRead),
-        .MemWrite(ex_mem_MemWrite),
-        .addr(ex_mem_alu_result),
-        .write_data(ex_mem_write_data),
-        .read_data(mem_read_data)
-    );
-
-
-    // ============================================================
-    // MEM/WB Pipeline Register
-    // ============================================================
-
-    wire [31:0] mem_wb_read_data;
-    wire [31:0] mem_wb_alu_result;
-    wire [31:0] mem_wb_pc_plus4;
-    wire [4:0] mem_wb_rd;
-
-    wire mem_wb_RegWrite;
-    wire mem_wb_MemToReg;
-    wire mem_wb_Jump;
-
-    mem_wb mem_wb_latch (
-        .clk(clk),
-        .rst(rst),
-
-        .read_data_in(mem_read_data),
-        .alu_result_in(ex_mem_alu_result),
-        .pc_plus4_in(ex_mem_pc_plus4),
-        .rd_in(ex_mem_rd),
-
-        .RegWrite_in(ex_mem_RegWrite),
-        .MemToReg_in(ex_mem_MemToReg),
-        .Jump_in(ex_mem_Jump),
-
-        .read_data_out(mem_wb_read_data),
-        .alu_result_out(mem_wb_alu_result),
-        .pc_plus4_out(mem_wb_pc_plus4),
-        .rd_out(mem_wb_rd),
-
-        .RegWrite_out(mem_wb_RegWrite),
-        .MemToReg_out(mem_wb_MemToReg),
-        .Jump_out(mem_wb_Jump)
-    );
-
-
-    // ============================================================
-    // WB Stage: Write Back
-    // ============================================================
-
-    wire [31:0] wb_normal_write_data;
-
-    mux2_32 mem_to_reg_mux (
-        .a(mem_wb_alu_result),
-        .b(mem_wb_read_data),
-        .sel(mem_wb_MemToReg),
-        .y(wb_normal_write_data)
-    );
-
-    mux2_32 jal_write_mux (
-        .a(wb_normal_write_data),
-        .b(mem_wb_pc_plus4),
-        .sel(mem_wb_Jump),
-        .y(wb_write_data)
-    );
-
-    assign wb_rd = mem_wb_rd;
-    assign wb_RegWrite = mem_wb_RegWrite;
+    always @(posedge clk or posedge rst) begin
+        if (rst) begin
+            read_data_out   <= 32'b0;
+            alu_result_out  <= 32'b0;
+            pc_plus4_out    <= 32'b0;
+            rd_out          <= 5'b0;
+
+            RegWrite_out    <= 1'b0;
+            MemToReg_out    <= 1'b0;
+            Jump_out        <= 1'b0;
+        end
+
+        else if (flush) begin
+            read_data_out   <= 32'b0;
+            alu_result_out  <= 32'b0;
+            pc_plus4_out    <= 32'b0;
+            rd_out          <= 5'b0;
+
+            RegWrite_out    <= 1'b0;
+            MemToReg_out    <= 1'b0;
+            Jump_out        <= 1'b0;
+        end
+
+        else if (!stall) begin
+            read_data_out   <= read_data_in;
+            alu_result_out  <= alu_result_in;
+            pc_plus4_out    <= pc_plus4_in;
+            rd_out          <= rd_in;
+
+            RegWrite_out    <= RegWrite_in;
+            MemToReg_out    <= MemToReg_in;
+            Jump_out        <= Jump_in;
+        end
+    end
 
 endmodule
