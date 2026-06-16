@@ -116,7 +116,6 @@ module pipelined_top (
         .ALUOp(id_ALUOp)
     );
 
-    wire [31:0] id_read_data1, id_read_data2;
 
     // These will come from WB stage
     wire wb_RegWrite;
