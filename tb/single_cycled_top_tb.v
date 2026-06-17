@@ -1,10 +1,10 @@
 `timescale 1ns/1ps
 
-module top_tb;
+module single_cycled_top_tb;
 
     reg clk, rst;
 
-    top dut (
+    single_cycled_top dut (
         .clk(clk),
         .rst(rst)
     );
@@ -37,8 +37,8 @@ module top_tb;
     end
 
     initial begin
-        $dumpfile("sim/waveforms/top.vcd");
-        $dumpvars(0, top_tb);
+        $dumpfile("sim/waveforms/single_cycled_top.vcd");
+        $dumpvars(0, single_cycled_top_tb);
     end
 
 endmodule

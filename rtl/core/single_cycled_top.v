@@ -1,4 +1,4 @@
-module top (
+module single_cycled_top (
     input clk, rst
 );
 
