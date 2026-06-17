@@ -1,22 +1,22 @@
 module ex_stage (
-    input [31:0] pc;
-    input [31:0] read_data1, read_data2;
-    input [31:0] imm;
+    input [31:0] pc,
+    input [31:0] read_data1, read_data2,
+    input [31:0] imm,
 
-    input [2:0] funct3;
-    input [6:0] funct7;
+    input [2:0] funct3,
+    input [6:0] funct7,
 
-    input ALUSrc;
-    input Branch;
-    input Jump;
-    input [1:0] ALUOp;
+    input ALUSrc,
+    input Branch,
+    input Jump,
+    input [1:0] ALUOp,
 
 
-    output [31:0] alu_result;
-    output [31:0] write_data;
-    output [31:0] pc_target;
-    output branch_taken;
-    output pc_src;
+    output [31:0] alu_result,
+    output [31:0] write_data,
+    output [31:0] pc_target,
+    output branch_taken,
+    output pc_src
 );
 
     wire [31:0] alu_src_b;
