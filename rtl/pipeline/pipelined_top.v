@@ -246,11 +246,10 @@ module pipelined_top (
         .clk(clk),
         .rst(rst),
         .stall(stall),
-        .flush(flush),
 
         .alu_result_in(alu_result),
         .write_data_in(write_data),
-        .branch_target_in(pc_target),           //Sus
+        .branch_target_in(pc_target),
         .branch_taken_in(branch_taken),
 
         .pc_plus4_in(id_ex_pc_plus4),
@@ -266,7 +265,7 @@ module pipelined_top (
 
         .alu_result_out(ex_mem_alu_result),
         .write_data_out(ex_mem_write_data),
-        .branch_target_out(ex_mem_pc_target),           //Sus
+        .branch_target_out(ex_mem_pc_target),
         .branch_taken_out(ex_mem_branch_taken),
 
         .pc_plus4_out(ex_mem_pc_plus4),
@@ -294,7 +293,6 @@ module pipelined_top (
         .clk(clk),
         .rst(rst),
         .stall(stall),
-        .flush(flush),
 
         .read_data_in(mem_rd_data),
         .alu_result_in(ex_mem_alu_result),

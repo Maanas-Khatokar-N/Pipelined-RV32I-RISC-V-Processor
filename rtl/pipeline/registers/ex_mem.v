@@ -3,7 +3,6 @@ module ex_mem (
     input rst,
 
     input stall,
-    input flush,
 
     input [31:0] alu_result_in,
     input [31:0] write_data_in,
@@ -39,22 +38,6 @@ module ex_mem (
 
     always @(posedge clk or posedge rst) begin
         if (rst) begin
-            alu_result_out    <= 32'b0;
-            write_data_out    <= 32'b0;
-            branch_target_out <= 32'b0;
-            branch_taken_out  <= 1'b0;
-            pc_plus4_out      <= 32'b0;
-            rd_out            <= 5'b0;
-
-            RegWrite_out <= 1'b0;
-            MemRead_out  <= 1'b0;
-            MemWrite_out <= 1'b0;
-            MemToReg_out <= 1'b0;
-            Branch_out   <= 1'b0;
-            Jump_out     <= 1'b0;
-        end
-
-        else if (flush) begin
             alu_result_out    <= 32'b0;
             write_data_out    <= 32'b0;
             branch_target_out <= 32'b0;

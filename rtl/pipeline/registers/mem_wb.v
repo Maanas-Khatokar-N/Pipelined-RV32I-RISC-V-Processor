@@ -3,7 +3,6 @@ module mem_wb (
     input rst,
 
     input stall,
-    input flush,
 
     input [31:0] read_data_in,
     input [31:0] alu_result_in,
@@ -27,17 +26,6 @@ module mem_wb (
 
     always @(posedge clk or posedge rst) begin
         if (rst) begin
-            read_data_out   <= 32'b0;
-            alu_result_out  <= 32'b0;
-            pc_plus4_out    <= 32'b0;
-            rd_out          <= 5'b0;
-
-            RegWrite_out    <= 1'b0;
-            MemToReg_out    <= 1'b0;
-            Jump_out        <= 1'b0;
-        end
-
-        else if (flush) begin
             read_data_out   <= 32'b0;
             alu_result_out  <= 32'b0;
             pc_plus4_out    <= 32'b0;
