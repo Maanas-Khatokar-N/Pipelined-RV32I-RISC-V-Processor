@@ -15,12 +15,12 @@ module register_file (
     integer i;
 
     //Read
-    assign read_data1 = registers[rs1];
-    assign read_data2 = registers[rs2];
+    assign read_data1 = (rs1 == 5'd0) ? 32'b0 : registers[rs1];
+    assign read_data2 = (rs2 == 5'd0) ? 32'b0 : registers[rs2];
 
 
     //Write
-    always @(posedge clk) begin
+    always @(posedge clk or posedge rst) begin
 
         //Reset
         if (rst) begin
