@@ -106,6 +106,11 @@ module pipelined_top (
     wire [31:0] wb_write_data;
 
 
+    //Forwarding wires
+    wire [1:0] ForwardA;
+    wire [1:0] ForwardB;
+
+
     assign stall = 1'b0;
     assign flush = pc_src;
     
@@ -220,11 +225,17 @@ module pipelined_top (
         .ALUOp_out(id_ex_ALUOp)
     );
 
-    ex_stage EX (
+    ex_stage ex (
         .pc(id_ex_pc),
         .read_data1(id_ex_read_data1),
         .read_data2(id_ex_read_data2),
         .imm(id_ex_imm),
+
+        .ex_mem_forward_data(ex_mem_alu_result),
+        .mem_wb_forward_data(wb_write_data),
+
+        .ForwardA(ForwardA),
+        .ForwardB(ForwardB),
 
         .funct3(id_ex_funct3),
         .funct7(id_ex_funct7),
@@ -234,12 +245,11 @@ module pipelined_top (
         .Jump(id_ex_Jump),
         .ALUOp(id_ex_ALUOp),
 
-
-        .alu_result(alu_result),
-        .write_data(write_data),
-        .pc_target(pc_target),
-        .branch_taken(branch_taken),
-        .pc_src(pc_src)
+        .alu_result(ex_alu_result),
+        .write_data(ex_write_data),
+        .pc_target(ex_pc_target),
+        .branch_taken(ex_branch_taken),
+        .pc_src(ex_pc_src)
     );
 
     ex_mem EX_MEM (
@@ -323,6 +333,22 @@ module pipelined_top (
         .Jump(mem_wb_Jump),
 
         .wb_write_data(wb_write_data)
+    );
+
+
+    //Forwarding Unit
+    forwarding_unit fu (
+        .id_ex_rs1(id_ex_rs1),
+        .id_ex_rs2(id_ex_rs2),
+
+        .ex_mem_rd(ex_mem_rd),
+        .ex_mem_RegWrite(ex_mem_RegWrite),
+
+        .mem_wb_rd(mem_wb_rd),
+        .mem_wb_RegWrite(mem_wb_RegWrite),
+
+        .ForwardA(ForwardA),
+        .ForwardB(ForwardB)
     );
 
 endmodule
