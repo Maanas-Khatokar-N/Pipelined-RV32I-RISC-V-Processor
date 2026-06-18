@@ -233,7 +233,6 @@ module pipelined_top (
 
         .ex_mem_forward_data(ex_mem_alu_result),
         .mem_wb_forward_data(wb_write_data),
-
         .ForwardA(ForwardA),
         .ForwardB(ForwardB),
 
@@ -245,11 +244,11 @@ module pipelined_top (
         .Jump(id_ex_Jump),
         .ALUOp(id_ex_ALUOp),
 
-        .alu_result(ex_alu_result),
-        .write_data(ex_write_data),
-        .pc_target(ex_pc_target),
-        .branch_taken(ex_branch_taken),
-        .pc_src(ex_pc_src)
+        .alu_result(alu_result),
+        .write_data(write_data),
+        .pc_target(pc_target),
+        .branch_taken(branch_taken),
+        .pc_src(pc_src)
     );
 
     ex_mem EX_MEM (
