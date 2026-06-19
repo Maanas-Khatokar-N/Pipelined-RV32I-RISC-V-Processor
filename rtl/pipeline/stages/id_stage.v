@@ -21,6 +21,10 @@ module id_stage (
 
     wire [6:0] opcode;
 
+    //For Bypass
+    wire [31:0] rf_read_data1;
+    wire [31:0] rf_read_data2;
+
     assign opcode = inst[6:0];
     assign rd     = inst[11:7];
     assign funct3 = inst[14:12];
@@ -43,14 +47,29 @@ module id_stage (
     register_file rf (
         .clk(clk),
         .rst(rst),
+
         .rs1(rs1),
         .rs2(rs2),
         .rd(wb_rd),
         .write_data(wb_write_data),
+
         .write_en(wb_RegWrite),
-        .read_data1(read_data1),
-        .read_data2(read_data2)
+
+        .read_data1(rf_read_data1),
+        .read_data2(rf_read_data2)
     );
+
+
+    // WB-to-ID bypass
+    assign read_data1 =
+        (rs1 == 5'd0) ? 32'b0 :
+        (wb_RegWrite && (wb_rd != 5'd0) && (wb_rd == rs1)) ? wb_write_data :
+        rf_read_data1;
+
+    assign read_data2 =
+        (rs2 == 5'd0) ? 32'b0 :
+        (wb_RegWrite && (wb_rd != 5'd0) && (wb_rd == rs2)) ? wb_write_data :
+        rf_read_data2;
 
     imm_gen get_imm (
         .inst(inst),
