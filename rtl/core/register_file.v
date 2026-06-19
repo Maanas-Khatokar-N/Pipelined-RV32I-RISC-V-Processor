@@ -14,9 +14,16 @@ module register_file (
 
     integer i;
 
-    //Read
-    assign read_data1 = (rs1 == 5'd0) ? 32'b0 : registers[rs1];
-    assign read_data2 = (rs2 == 5'd0) ? 32'b0 : registers[rs2];
+    // Read with WB-to-ID bypass
+    assign read_data1 =
+        (rs1 == 5'd0) ? 32'b0 :
+        (write_en && (rd != 5'd0) && (rd == rs1)) ? write_data :
+        registers[rs1];
+
+    assign read_data2 =
+        (rs2 == 5'd0) ? 32'b0 :
+        (write_en && (rd != 5'd0) && (rd == rs2)) ? write_data :
+        registers[rs2];
 
 
     //Write
