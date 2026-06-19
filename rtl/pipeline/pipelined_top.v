@@ -110,8 +110,12 @@ module pipelined_top (
     wire [1:0] ForwardA;
     wire [1:0] ForwardB;
 
+    //Load-use hazard unit wires
+    wire load_use_stall;
+    wire load_use_flush;
 
-    assign stall = 1'b0;
+
+    assign stall = load_use_stall;
     assign flush = pc_src;
     
     if_stage IF (
@@ -177,7 +181,7 @@ module pipelined_top (
         .clk(clk),
         .rst(rst),
         .stall(stall),
-        .flush(flush),
+        .flush(load_use_flush),
 
         .pc_in(if_id_pc),
         .pc_plus4_in(if_id_pc_plus4),
@@ -349,5 +353,17 @@ module pipelined_top (
         .ForwardA(ForwardA),
         .ForwardB(ForwardB)
     );
+
+    //Load-use Hazard Unit
+    load_use_hazard_unit lhu (
+        .id_ex_MemRead(id_ex_MemRead),
+        .id_ex_rd(id_ex_rd),
+
+        .if_id_rs1(if_id_rs1),
+        .if_id_rs2(if_id_rs2),
+
+        .stall(load_use_stall),
+        .id_ex_flush(load_use_flush)
+    ); 
 
 endmodule
