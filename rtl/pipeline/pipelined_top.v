@@ -225,7 +225,7 @@ module pipelined_top (
         .ALUOp_out(id_ex_ALUOp)
     );
 
-    ex_stage ex (
+    ex_stage EX (
         .pc(id_ex_pc),
         .read_data1(id_ex_read_data1),
         .read_data2(id_ex_read_data2),
