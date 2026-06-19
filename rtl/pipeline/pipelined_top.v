@@ -3,7 +3,8 @@ module pipelined_top (
 );
 
     wire stall;
-    wire flush;
+    wire if_id_flush;
+    wire id_ex_flush;
 
     // IF stage wires
     wire pc_src;
@@ -115,8 +116,9 @@ module pipelined_top (
     wire load_use_flush;
 
 
-    assign stall = load_use_stall;
-    assign flush = pc_src;
+    assign stall = load_use_stall & ~pc_src;
+    assign if_id_flush = pc_src;
+    assign id_ex_flush = pc_src | load_use_flush;
     
     if_stage IF (
         .clk(clk),
@@ -134,7 +136,7 @@ module pipelined_top (
         .clk(clk),
         .rst(rst),
         .stall(stall),
-        .flush(flush),
+        .flush(if_id_flush),
 
         .pc_in(pc),
         .pc_plus4_in(pc_plus4),
@@ -181,7 +183,7 @@ module pipelined_top (
         .clk(clk),
         .rst(rst),
         .stall(1'b0),
-        .flush(load_use_flush),
+        .flush(id_ex_flush),
 
         .pc_in(if_id_pc),
         .pc_plus4_in(if_id_pc_plus4),
