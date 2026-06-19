@@ -180,7 +180,7 @@ module pipelined_top (
     id_ex ID_EX (
         .clk(clk),
         .rst(rst),
-        .stall(stall),
+        .stall(1'b0),
         .flush(load_use_flush),
 
         .pc_in(if_id_pc),
@@ -258,7 +258,7 @@ module pipelined_top (
     ex_mem EX_MEM (
         .clk(clk),
         .rst(rst),
-        .stall(stall),
+        .stall(1'b0),
 
         .alu_result_in(alu_result),
         .write_data_in(write_data),
@@ -305,7 +305,7 @@ module pipelined_top (
     mem_wb MEM_WB (
         .clk(clk),
         .rst(rst),
-        .stall(stall),
+        .stall(1'b0),
 
         .read_data_in(mem_rd_data),
         .alu_result_in(ex_mem_alu_result),
@@ -359,8 +359,8 @@ module pipelined_top (
         .id_ex_MemRead(id_ex_MemRead),
         .id_ex_rd(id_ex_rd),
 
-        .if_id_rs1(if_id_rs1),
-        .if_id_rs2(if_id_rs2),
+        .if_id_rs1(rs1),
+        .if_id_rs2(rs2),
 
         .stall(load_use_stall),
         .id_ex_flush(load_use_flush)
