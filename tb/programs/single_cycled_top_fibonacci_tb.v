@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module single_cycled_top_tb;
+module single_cycled_top_fibonacci_tb;
 
     reg clk, rst;
 
@@ -37,8 +37,8 @@ module single_cycled_top_tb;
     end
 
     initial begin
-        $dumpfile("sim/waveforms/single_cycled_top.vcd");
-        $dumpvars(0, single_cycled_top_tb);
+        $dumpfile("sim/waveforms/single_cycled_top_fibonacci.vcd");
+        $dumpvars(0, single_cycled_top_fibonacci_tb);
     end
 
 endmodule
