@@ -25,13 +25,13 @@ The design is verified using module-level testbenches, processor-level tests, ha
 <table>
 <tr>
 <td align="center">🟦<br><b>IF</b><br><sub>Instruction Fetch</sub></td>
-<td align="center">➡️</td>
+<td align="center">→</td>
 <td align="center">🟩<br><b>ID</b><br><sub>Instruction Decode</sub></td>
-<td align="center">➡️</td>
+<td align="center">→</td>
 <td align="center">🟨<br><b>EX</b><br><sub>Execute</sub></td>
-<td align="center">➡️</td>
+<td align="center">→</td>
 <td align="center">🟧<br><b>MEM</b><br><sub>Memory Access</sub></td>
-<td align="center">➡️</td>
+<td align="center">→</td>
 <td align="center">🟥<br><b>WB</b><br><sub>Write Back</sub></td>
 </tr>
 </table>
