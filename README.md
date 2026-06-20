@@ -18,30 +18,58 @@
 
 ## About the Project
 
-This project is a Verilog implementation of an **5-stage pipelined RV32I RISC-V processor** featuring both a **single-cycle processor** and a **5-stage pipelined processor**.
+This project is a Verilog implementation of an **RV32I RISC-V processor**, featuring both a **single-cycle design** and a **5-stage pipelined design**.
 
-The pipelined processor is organized into separate IF, ID, EX, MEM, and WB stages with dedicated inter-stage pipeline registers. It supports forwarding, load-use hazard stalling, branch/jump flushing, ALU control, register file operations, and instruction/data memory access.
+The pipelined processor is organized into IF, ID, EX, MEM, and WB stages with dedicated pipeline registers. It supports forwarding, load-use hazard stalling, branch/jump flushing, ALU control, register file operations, and instruction/data memory access.
 
-The design is verified using module-level testbenches, processor-level tests, hazard-specific tests, and complete .mem program simulations.
+The design is verified using module-level testbenches, processor-level tests, hazard-specific tests, and complete `.mem` program simulations.
 
 ---
 
 ## Architecture
 
+<div align="center">
+
+### 5-Stage Pipeline Datapath
+
+<table>
+<tr>
+<td align="center"><b>IF</b><br><sub>Instruction Fetch</sub></td>
+<td align="center">→</td>
+<td align="center"><b>ID</b><br><sub>Instruction Decode</sub></td>
+<td align="center">→</td>
+<td align="center"><b>EX</b><br><sub>Execute</sub></td>
+<td align="center">→</td>
+<td align="center"><b>MEM</b><br><sub>Memory Access</sub></td>
+<td align="center">→</td>
+<td align="center"><b>WB</b><br><sub>Write Back</sub></td>
+</tr>
+</table>
+
+</div>
+
 ```mermaid
 flowchart LR
-    A[IF<br/>Instruction Fetch] --> B[IF/ID<br/>Pipeline Register]
-    B --> C[ID<br/>Instruction Decode<br/>Register Fetch]
-    C --> D[ID/EX<br/>Pipeline Register]
-    D --> E[EX<br/>Execute<br/>ALU + Branch]
-    E --> F[EX/MEM<br/>Pipeline Register]
-    F --> G[MEM<br/>Data Memory]
-    G --> H[MEM/WB<br/>Pipeline Register]
-    H --> I[WB<br/>Write Back]
-    I -.-> C
+    PC[Program Counter] --> IF[IF Stage]
+    IF --> IFID[IF/ID Register]
+    IFID --> ID[ID Stage]
+    ID --> IDEX[ID/EX Register]
+    IDEX --> EX[EX Stage]
+    EX --> EXMEM[EX/MEM Register]
+    EXMEM --> MEM[MEM Stage]
+    MEM --> MEMWB[MEM/WB Register]
+    MEMWB --> WB[WB Stage]
+    WB -. Register Write Back .-> ID
 ```
 
-The processor is organized around the classic RISC pipeline.
+<div align="center">
+
+<!-- 
+> Add architecture / datapath image here later
+> Suggested path: `docs/images/pipeline_datapath.png`
+-->
+
+</div>
 
 | Stage   | Role                                                                                     |
 | ------- | ---------------------------------------------------------------------------------------- |
@@ -220,25 +248,26 @@ This keeps the design modular and easy to debug. Each stage is separated, while 
 
 ## Verification
 
-The project is verified at both block level and processor level.
+The processor is verified through individual module tests, top-level processor tests, hazard-specific tests, and full program execution using `.mem` files.
 
-```mermaid
-flowchart TD
-    A[Core Module Tests] --> B[Single-Cycle Processor Test]
-    B --> C[Basic Pipeline Test]
-    C --> D[Forwarding Test]
-    D --> E[Load-Use Hazard Test]
-    E --> F[Full Program Tests]
-```
+| Verification Area | Test Coverage                                                                          | Status |
+| ----------------- | -------------------------------------------------------------------------------------- | ------ |
+| Core modules      | ALU, control unit, register file, immediate generator, instruction memory, data memory | PASS   |
+| Single-cycle CPU  | End-to-end instruction execution on the single-cycle processor                         | PASS   |
+| Pipelined CPU     | Stage connection, pipeline register propagation, PC update, and write-back correctness | PASS   |
+| Forwarding        | Back-to-back RAW dependencies and forwarding paths                                     | PASS   |
+| Load-use hazard   | Stall and bubble insertion after `LW`                                                  | PASS   |
+| Branch / Jump     | Taken branch and jump flushing                                                         | PASS   |
+| Program execution | Complete `.mem` programs running on the pipelined processor                            | PASS   |
 
-| Verification Area | Test Coverage                                                                          |
-| ----------------- | -------------------------------------------------------------------------------------- |
-| Core modules      | ALU, control unit, register file, immediate generator, instruction memory, data memory |
-| Single-cycle CPU  | End-to-end instruction execution before pipelining                                     |
-| Pipelined CPU     | Stage connection, register propagation, PC update, write-back correctness              |
-| Forwarding        | Back-to-back RAW dependencies                                                          |
-| Load-use hazard   | Stall and bubble insertion after `LW`                                                  |
-| Program execution | Complete `.mem` programs running on the pipelined processor                            |
+<div align="center">
+
+<!-- 
+> Add verification output screenshot here later
+> Suggested path: `docs/images/test_results.png`
+-->
+
+</div>
 
 ---
 
@@ -278,11 +307,13 @@ git clone https://github.com/Maanas-Khatokar-N/Pipelined-RV32I-RISC-V-Processor.
 cd Pipelined-RV32I-RISC-V-Processor
 ```
 
-Run any program test using the scripts inside `sim/scripts`.
+Give execute permission to the scripts:
 
 ```bash
 chmod +x sim/scripts/*.sh
 ```
+
+### Run Program Tests
 
 | Test               | Command                                  |
 | ------------------ | ---------------------------------------- |
@@ -293,6 +324,48 @@ chmod +x sim/scripts/*.sh
 | Forwarding Stress  | `./sim/scripts/run_forwarding_stress.sh` |
 
 Each script compiles the RTL, runs the corresponding testbench, and prints the verification result in the terminal.
+
+### Run Core Testbenches
+
+To run a testbench from `tb/core/`, use:
+
+```bash
+iverilog -Wall -o sim/build/<test_name>.vvp \
+rtl/core/*.v \
+rtl/pipeline/hazard/*.v \
+rtl/pipeline/registers/*.v \
+rtl/pipeline/stages/*.v \
+rtl/pipeline/*.v \
+tb/core/<testbench_name>.v
+
+vvp sim/build/<test_name>.vvp
+```
+
+### Run Any Program Testbench Manually
+
+To run any testbench from `tb/programs/`, use:
+
+```bash
+iverilog -Wall -o sim/build/<program_test>.vvp \
+rtl/core/*.v \
+rtl/pipeline/hazard/*.v \
+rtl/pipeline/registers/*.v \
+rtl/pipeline/stages/*.v \
+rtl/pipeline/*.v \
+tb/programs/<program_testbench>.v
+
+vvp sim/build/<program_test>.vvp
+```
+
+
+<div align="center">
+
+<!-- 
+> Add waveform screenshot here later
+> Suggested path: `docs/images/waveforms/pipeline_waveform.png`
+-->
+
+</div>
 
 ---
 
@@ -323,30 +396,15 @@ This is useful while writing program testbenches and checking final memory outpu
 
 ---
 
-## Design Snapshot
-
-```text
-ISA              : RV32I subset
-Data width       : 32-bit
-Register file    : 32 × 32-bit
-Register x0      : Hardwired to zero
-Pipeline stages  : IF, ID, EX, MEM, WB
-Memory model     : Separate instruction and data memory
-Hazards handled  : Forwarding, load-use stall, branch/jump flush
-Verification     : Unit tests + full program simulations
-```
-
----
-
 ## Future Improvements
 
-| Improvement                      | Purpose                                      |
-| -------------------------------- | -------------------------------------------- |
-| Add remaining RV32I instructions | Increase ISA completeness                    |
-| Add `JALR` support               | Improve control-flow capability              |
-| Add shift instructions           | Support more arithmetic/logical programs     |
-| Add automated regression script  | Run all tests with one command               |
-| Add waveform screenshots         | Make debugging and documentation more visual |
+| Improvement                                 | Purpose                                                 |
+| ------------------------------------------- | ------------------------------------------------------- |
+| Add remaining RV32I instructions            | Increase ISA completeness                               |
+| Add RV32M multiplication/division extension | Support hardware multiply and divide operations         |
+| Add `JALR` support                          | Improve control-flow capability                         |
+| Add shift instructions                      | Support more arithmetic/logical programs                |
+| Add branch prediction                       | Reduce control hazard penalties and improve performance |
 
 ---
 
