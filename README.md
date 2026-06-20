@@ -80,15 +80,15 @@ flowchart LR
 
 ---
 
-## What This Processor Supports
+## Supported Instruction Subset
 
-| Category          | Instructions                      |
-| ----------------- | --------------------------------- |
-| **Arithmetic**    | `ADD`, `SUB`, `ADDI`              |
-| **Logical**       | `AND`, `OR`, `XOR`, `ANDI`, `ORI` |
-| **Comparison**    | `SLT`                             |
-| **Memory**        | `LW`, `SW`                        |
-| **Branch / Jump** | `BEQ`, `BNE`, `JAL`               |
+| Type   | Instructions                            |
+| ------ | --------------------------------------- |
+| R-Type | `ADD`, `SUB`, `AND`, `OR`, `XOR`, `SLT` |
+| I-Type | `ADDI`, `ORI`, `ANDI`, `LW`             |
+| S-Type | `SW`                                    |
+| B-Type | `BEQ`, `BNE`                            |
+| J-Type | `JAL`                                   |
 
 ---
 
@@ -108,39 +108,6 @@ flowchart LR
 | Load-use hazard stall              | Complete |
 | Branch and jump flush              | Complete |
 | Program-level verification         | Complete |
-
----
-
-## Pipeline Hazard Handling
-
-A pipelined processor must handle cases where instructions overlap and depend on each other. This design includes both **forwarding** and **stalling** mechanisms.
-
-### Data Forwarding
-
-Forwarding is used when an instruction needs a value that has already been computed by an older instruction but has not yet reached the register file.
-
-```text
-EX/MEM  →  EX
-MEM/WB  →  EX
-WB      →  ID
-```
-
-This allows back-to-back dependent arithmetic instructions to execute correctly without unnecessary stalls.
-
-### Load-Use Hazard Stall
-
-A load-use hazard occurs when an instruction immediately after `LW` depends on the loaded data.
-
-```asm
-lw   x1, 0(x2)
-add  x3, x1, x4
-```
-
-Since load data becomes available only after the memory stage, the processor inserts one bubble by holding the PC and IF/ID register while flushing the ID/EX control signals.
-
-### Branch and Jump Flush
-
-For `BEQ`, `BNE`, and `JAL`, the processor flushes wrong-path instructions after a taken branch or jump. This prevents incorrectly fetched instructions from updating architectural state.
 
 ---
 
@@ -241,9 +208,118 @@ The RTL is divided into reusable core blocks and pipelined processor blocks.
 | `rtl/pipeline/hazard/`         | Forwarding and load-use hazard detection units            |
 | `rtl/pipeline/pipelined_top.v` | Top-level pipelined processor integration                 |
 
-This keeps the design modular and easy to debug. Each stage is separated, while the top module connects the full datapath, control path, hazard units, and pipeline registers.
+---
+
+## Documentation
+
+Detailed design explanations available in the `docs/` folder.
+
+| Document                    | Purpose                                                                 |
+| --------------------------- | ----------------------------------------------------------------------- |
+| `docs/architecture.md`      | Overall processor architecture and top-level datapath                   |
+| `docs/instruction_set.md`   | Supported RV32I subset, instruction formats, opcode/funct mapping       |
+| `docs/pipeline_design.md`   | Explanation of IF, ID, EX, MEM, WB stages and pipeline registers        |
+| `docs/hazard_forwarding.md` | Forwarding paths, load-use stall logic, branch/jump flushing            |
+| `docs/verification.md`      | Testbench strategy, program tests, expected outputs, waveform debugging |
+| `docs/images/`              | Datapath diagrams, pipeline diagrams, screenshots, and waveform images  |
 
 ---
+
+## Datapath Summary
+
+### Core Components
+
+| Module                   | Description                                                        |
+| ------------------------ | ------------------------------------------------------------------ |
+| `program_counter.v`      | Holds the current instruction address                              |
+| `instruction_memory.v`   | Stores program instructions loaded from `.mem` files               |
+| `register_file.v`        | 32-register file with two read ports and one write port            |
+| `imm_gen.v`              | Generates sign-extended immediates                                 |
+| `control_unit.v`         | Generates main control signals from opcode                         |
+| `alu_control.v`          | Generates ALU control signal using `ALUOp`, `funct3`, and `funct7` |
+| `alu.v`                  | Performs arithmetic, logical, and comparison operations            |
+| `data_memory.v`          | Handles word-level load and store operations                       |
+| `mux2_32.v`, `mux3_32.v` | Datapath selection multiplexers                                    |
+
+### Pipeline Components
+
+| Module                   | Description                                            |
+| ------------------------ | ------------------------------------------------------ |
+| `if_stage.v`             | Fetches instruction and updates PC                     |
+| `id_stage.v`             | Decodes instruction and reads register operands        |
+| `ex_stage.v`             | Executes ALU operation and computes branch/jump target |
+| `mem_stage.v`            | Accesses data memory                                   |
+| `wb_stage.v`             | Selects final write-back data                          |
+| `if_id.v`                | Pipeline register between IF and ID                    |
+| `id_ex.v`                | Pipeline register between ID and EX                    |
+| `ex_mem.v`               | Pipeline register between EX and MEM                   |
+| `mem_wb.v`               | Pipeline register between MEM and WB                   |
+| `forwarding_unit.v`      | Resolves ALU-to-ALU RAW hazards                        |
+| `load_use_hazard_unit.v` | Detects load-use hazards and inserts one-cycle stall   |
+
+---
+
+
+## Pipeline Hazard Handling
+
+A pipelined processor must handle cases where instructions overlap and depend on each other. This design includes both **forwarding** and **stalling** mechanisms.
+
+### Data Forwarding
+
+Forwarding is used when an instruction needs a value that has already been computed by an older instruction but has not yet reached the register file.
+
+```text
+EX/MEM  →  EX
+MEM/WB  →  EX
+WB      →  ID
+```
+
+This allows back-to-back dependent arithmetic instructions to execute correctly without unnecessary stalls.
+
+### Load-Use Hazard Stall
+
+A load-use hazard occurs when an instruction immediately after `LW` depends on the loaded data.
+
+```asm
+lw   x1, 0(x2)
+add  x3, x1, x4
+```
+
+Since load data becomes available only after the memory stage, the processor inserts one bubble by holding the PC and IF/ID register while flushing the ID/EX control signals.
+
+### Branch and Jump Flush
+
+For `BEQ`, `BNE`, and `JAL`, the processor flushes wrong-path instructions after a taken branch or jump. This prevents incorrectly fetched instructions from updating architectural state.
+
+---
+
+## Memory Model
+
+The processor uses separate instruction and data memories.
+
+| Memory             | Usage                                                         |
+| ------------------ | ------------------------------------------------------------- |
+| Instruction Memory | Stores 32-bit instructions loaded from `.mem` files           |
+| Data Memory        | Stores 32-bit data values used by load and store instructions |
+
+Data memory is word-indexed internally using:
+
+```verilog
+memory[addr[31:2]]
+```
+
+So a byte address maps to a word location as follows:
+
+```text
+Address 40  -> memory[10]
+Address 100 -> memory[25]
+Address 104 -> memory[26]
+```
+
+This is useful while writing program testbenches and checking final memory outputs.
+
+---
+
 
 ## Verification
 
@@ -329,7 +405,7 @@ Each script compiles the RTL, runs the corresponding testbench, and prints the v
 To run a testbench from `tb/core/`, use:
 
 ```bash
-iverilog -Wall -o sim/build/<test_name>.vvp \
+iverilog -o sim/build/<test_name>.vvp \
 rtl/core/*.v \
 rtl/pipeline/hazard/*.v \
 rtl/pipeline/registers/*.v \
@@ -345,7 +421,7 @@ vvp sim/build/<test_name>.vvp
 To run any testbench from `tb/programs/`, use:
 
 ```bash
-iverilog -Wall -o sim/build/<program_test>.vvp \
+iverilog -o sim/build/<program_test>.vvp \
 rtl/core/*.v \
 rtl/pipeline/hazard/*.v \
 rtl/pipeline/registers/*.v \
@@ -368,32 +444,6 @@ vvp sim/build/<program_test>.vvp
 
 ---
 
-## Memory Model
-
-The processor uses separate instruction and data memories.
-
-| Memory             | Usage                                                         |
-| ------------------ | ------------------------------------------------------------- |
-| Instruction Memory | Stores 32-bit instructions loaded from `.mem` files           |
-| Data Memory        | Stores 32-bit data values used by load and store instructions |
-
-Data memory is word-indexed internally using:
-
-```verilog
-memory[addr[31:2]]
-```
-
-So a byte address maps to a word location as follows:
-
-```text
-Address 40  -> memory[10]
-Address 100 -> memory[25]
-Address 104 -> memory[26]
-```
-
-This is useful while writing program testbenches and checking final memory outputs.
-
----
 
 ## Future Improvements
 
