@@ -111,6 +111,18 @@ flowchart LR
 ```text
 Pipelined-RV32I-RISC-V-Processor/
 │
+├── docs/
+│   ├── img/
+│   │   ├── datapath.png
+│   │   ├── pipeline_diagram.png
+│   │   └── verification_waveform.png
+│   │
+│   ├── architecture.md
+│   ├── instruction_set.md
+│   ├── pipeline_design.md
+│   ├── hazards.md
+│   └── verification.md
+│
 ├── programs/
 │   ├── array_sum.mem
 │   ├── fibonacci.mem
@@ -215,18 +227,20 @@ The RTL is divided into reusable core blocks and pipelined processor blocks.
 > [!NOTE]
 > Detailed design explanations are available in the `docs/` folder.
 
+```html
 <div align="center">
 
 | Document | Purpose |
 |:---|:---|
-| 📘 `docs/architecture.md` | Overall processor architecture and top-level datapath |
-| 📗 `docs/instruction_set.md` | Supported RV32I subset, instruction formats, opcode/funct mapping |
-| 📙 `docs/pipeline_design.md` | Explanation of IF, ID, EX, MEM, WB stages and pipeline registers |
-| 📕 `docs/hazard_forwarding.md` | Forwarding paths, load-use stall logic, branch/jump flushing |
-| 📔 `docs/verification.md` | Testbench strategy, program tests, expected outputs, waveform debugging |
-| 🖼️ `docs/images/` | Datapath diagrams, pipeline diagrams, screenshots, and waveform images |
+| 📘 [`docs/architecture.md`](docs/architecture.md) | Overall processor architecture and top-level datapath |
+| 📗 [`docs/instruction_set.md`](docs/instruction_set.md) | Supported RV32I subset, instruction formats, opcode/funct mapping |
+| 📙 [`docs/pipeline_design.md`](docs/pipeline_design.md) | Explanation of IF, ID, EX, MEM, WB stages and pipeline registers |
+| 📕 [`docs/hazards.md`](docs/hazards.md) | Forwarding paths, load-use stall logic, branch/jump flushing |
+| 📔 [`docs/verification.md`](docs/verification.md) | Testbench strategy, program tests, expected outputs, waveform debugging |
+| 🖼️ [`docs/images/`](docs/images/) | Datapath diagrams, pipeline diagrams, screenshots, and waveform images |
 
 </div>
+```
 
 ---
 
