@@ -92,23 +92,17 @@ flowchart LR
 
 ---
 
-## Core Capabilities
+## Implementation Highlights
 
-| Feature                            | Status   |
-| ---------------------------------- | -------- |
-| Single-cycle RV32I processor       | Complete |
-| 5-stage pipelined datapath         | Complete |
-| Modular IF, ID, EX, MEM, WB stages | Complete |
-| Pipeline registers                 | Complete |
-| Register file with hardwired `x0`  | Complete |
-| RV32I immediate generation         | Complete |
-| ALU and ALU control                | Complete |
-| Instruction memory and data memory | Complete |
-| Data forwarding                    | Complete |
-| Load-use hazard stall              | Complete |
-| Branch and jump flush              | Complete |
-| Program-level verification         | Complete |
-
+- Single-cycle RV32I processor
+- 5-stage pipelined RV32I processor
+- Modular IF, ID, EX, MEM, and WB stages
+- Dedicated pipeline registers
+- ALU, register file, and immediate generator
+- Instruction and data memory subsystem
+- Data forwarding and load-use hazard handling
+- Branch and jump flushing
+- Program-level verification using `.mem` files
 ---
 
 ## Repository Structure
