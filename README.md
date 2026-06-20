@@ -79,7 +79,6 @@ flowchart LR
 
 </div>
 
-
 ---
 
 ## Supported Instruction Subset
@@ -231,6 +230,7 @@ The RTL is divided into reusable core blocks and pipelined processor blocks.
 | 🖼️ `docs/images/` | Datapath diagrams, pipeline diagrams, screenshots, and waveform images |
 
 </div>
+
 ---
 
 ## Datapath Summary
