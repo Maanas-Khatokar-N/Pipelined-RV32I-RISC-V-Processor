@@ -94,6 +94,7 @@ flowchart LR
 | J-Type | `JAL`                                   |
 
 </div>
+
 ---
 
 ## Implementation Highlights
