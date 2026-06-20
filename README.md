@@ -64,10 +64,9 @@ flowchart LR
 
 <div align="center">
 
-<!-- 
+ 
 > Add architecture / datapath image here later
 > Suggested path: `docs/images/pipeline_datapath.png`
--->
 
 </div>
 
