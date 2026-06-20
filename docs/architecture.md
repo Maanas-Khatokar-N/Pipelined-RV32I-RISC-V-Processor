@@ -2,21 +2,7 @@
 
 This document gives a high-level overview of the architecture of the **RV32I Pipelined RISC-V Processor**.
 
-The processor is a 32-bit RISC-V processor based on a subset of the RV32I base integer instruction set. The design was first built as a single-cycle processor and later extended into a 5-stage pipelined processor.
-
-This file focuses only on the overall architecture and datapath organization. Detailed instruction formats, pipeline behavior, hazards, and verification are documented separately.
-
----
-
-## Documentation Map
-
-| Document                                   | Purpose                                                            |
-| ------------------------------------------ | ------------------------------------------------------------------ |
-| [`architecture.md`](architecture.md)       | Overall processor architecture and main datapath blocks            |
-| [`instruction_set.md`](instruction_set.md) | Supported RV32I instructions, formats, opcodes, and encoding       |
-| [`pipeline_design.md`](pipeline_design.md) | Detailed 5-stage pipeline design and pipeline registers            |
-| [`hazards.md`](hazards.md)                 | Forwarding, load-use stall, branch/jump flush, and hazard handling |
-| [`verification.md`](verification.md)       | Testbenches, program tests, expected results, and simulation flow  |
+The processor is a 32-bit RISC-V processor based on a subset of the RV32I base integer instruction set.
 
 ---
 

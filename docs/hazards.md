@@ -40,7 +40,8 @@ This design handles three main cases:
 | Load result needed immediately        | One-cycle stall               |
 | Branch/jump changes PC                | Flush wrong-path instructions |
 
-The processor also uses WB-to-ID bypass to handle same-cycle register write/read cases.
+> [!NOTE]
+> The processor also uses WB-to-ID bypass to handle same-cycle register write/read cases.
 
 ---
 

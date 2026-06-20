@@ -95,14 +95,14 @@ R-type instructions operate on two source registers and write the result to one 
 
 ### Supported R-Type Instructions
 
-| Instruction        | Operation                    | opcode    | funct3    | funct7    |           |
-| ------------------ | ---------------------------- | --------- | --------- | --------- | --------- |
-| `add rd, rs1, rs2` | `rd = rs1 + rs2`             | `0110011` | `000`     | `0000000` |           |
-| `sub rd, rs1, rs2` | `rd = rs1 - rs2`             | `0110011` | `000`     | `0100000` |           |
-| `and rd, rs1, rs2` | `rd = rs1 & rs2`             | `0110011` | `111`     | `0000000` |           |
-| `or rd, rs1, rs2`  | `rd = rs1                    | rs2`      | `0110011` | `110`     | `0000000` |
-| `xor rd, rs1, rs2` | `rd = rs1 ^ rs2`             | `0110011` | `100`     | `0000000` |           |
-| `slt rd, rs1, rs2` | `rd = 1 if rs1 < rs2 else 0` | `0110011` | `010`     | `0000000` |           |
+| Instruction        | Operation                    | opcode    | funct3    | funct7    |
+| ------------------ | ---------------------------- | --------- | --------- | --------- |
+| `add rd, rs1, rs2` | `rd = rs1 + rs2`             | `0110011` | `000`     | `0000000` |
+| `sub rd, rs1, rs2` | `rd = rs1 - rs2`             | `0110011` | `000`     | `0100000` |
+| `and rd, rs1, rs2` | `rd = rs1 & rs2`             | `0110011` | `111`     | `0000000` |
+| `or rd, rs1, rs2`  | `rd = rs1 &#124; rs2`        | `0110011` | `110`     | `0000000` |
+| `xor rd, rs1, rs2` | `rd = rs1 ^ rs2`             | `0110011` | `100`     | `0000000` |
+| `slt rd, rs1, rs2` | `rd = 1 if rs1 < rs2 else 0` | `0110011` | `010`     | `0000000` |
 
 For `slt`, the comparison is signed.
 
@@ -147,11 +147,11 @@ imm_i = {{20{inst[31]}}, inst[31:20]};
 
 ## I-Type ALU Instructions
 
-| Instruction         | Operation        | opcode    | funct3    |       |
-| ------------------- | ---------------- | --------- | --------- | ----- |
-| `addi rd, rs1, imm` | `rd = rs1 + imm` | `0010011` | `000`     |       |
-| `andi rd, rs1, imm` | `rd = rs1 & imm` | `0010011` | `111`     |       |
-| `ori rd, rs1, imm`  | `rd = rs1        | imm`      | `0010011` | `110` |
+| Instruction         | Operation             | opcode    | funct3    |
+| ------------------- | ----------------      | --------- | --------- |
+| `addi rd, rs1, imm` | `rd = rs1 + imm`      | `0010011` | `000`     |
+| `andi rd, rs1, imm` | `rd = rs1 & imm`      | `0010011` | `111`     |
+| `ori rd, rs1, imm`  | `rd = rs1 &#124; imm` | `0010011` | `110`     |
 
 ### Example
 
@@ -277,7 +277,8 @@ The branch immediate is reconstructed as:
 imm_b = {{19{inst[31]}}, inst[31], inst[7], inst[30:25], inst[11:8], 1'b0};
 ```
 
-The least significant bit is always zero because branch targets are aligned.
+> [!NOTE]
+> The least significant bit is always zero because branch targets are aligned.
 
 ---
 
@@ -328,7 +329,8 @@ The jump immediate is reconstructed as:
 imm_j = {{11{inst[31]}}, inst[31], inst[19:12], inst[20], inst[30:21], 1'b0};
 ```
 
-The least significant bit is always zero because jump targets are aligned.
+> [!NOTE]
+> The least significant bit is always zero because jump targets are aligned.
 
 ---
 

@@ -4,7 +4,7 @@ This document explains the verification strategy used for the **RV32I Pipelined 
 
 The goal of verification is to confirm that the processor executes instructions correctly, handles hazards properly, and produces the expected register and memory results for complete programs.
 
-This file focuses only on:
+This file focuses on:
 
 ```text
 Testbench strategy
@@ -65,36 +65,6 @@ A typical processor testbench performs the following steps:
 6. Check final register and memory values
 7. Print PASS or FAIL messages
 8. Dump waveform output for debugging
-```
-
-Example structure:
-
-```verilog
-initial begin
-    $dumpfile("sim/waveforms/test.vcd");
-    $dumpvars(0, testbench_name);
-
-    // load program
-    $readmemh("tb/programs/program.mem", dut.IF.inst_mem.memory);
-
-    // initialize memory/registers if required
-
-    // apply reset
-    rst = 1;
-    #20;
-    rst = 0;
-
-    // run simulation
-    #1000;
-
-    // check results
-    if (expected_value == actual_value)
-        $display("PASS");
-    else
-        $display("FAIL");
-
-    $finish;
-end
 ```
 
 ---
@@ -263,18 +233,6 @@ Check whether the processor can execute a loop-based program correctly.
 ### Expected Result
 
 The expected Fibonacci result depends on the input value selected in the testbench or data memory.
-
-The testbench should check the final output register or memory location where the Fibonacci result is stored.
-
-Example check style:
-
-```verilog
-if (`DMEM[RESULT_ADDR] == EXPECTED_FIB)
-    $display("PASS: Fibonacci result correct");
-else
-    $display("FAIL: Fibonacci result = %0d, Expected = %0d",
-             `DMEM[RESULT_ADDR], EXPECTED_FIB);
-```
 
 ---
 
@@ -536,7 +494,7 @@ A typical script performs:
 Example compile command:
 
 ```bash
-iverilog -Wall -o sim/build/fibonacci.vvp \
+iverilog -o sim/build/fibonacci.vvp \
 rtl/core/*.v \
 rtl/pipeline/hazard/*.v \
 rtl/pipeline/registers/*.v \
@@ -558,7 +516,7 @@ vvp sim/build/fibonacci.vvp
 To run any other testbench manually:
 
 ```bash
-iverilog -Wall -o sim/build/custom_test.vvp \
+iverilog -o sim/build/custom_test.vvp \
 rtl/core/*.v \
 rtl/pipeline/hazard/*.v \
 rtl/pipeline/registers/*.v \
@@ -677,8 +635,6 @@ When a test fails, debug in this order:
 10. Check final write-back value.
 ```
 
-This method helps locate the exact stage where the wrong value first appears.
-
 ---
 
 ## 22. Common Issues Found During Verification
@@ -711,20 +667,5 @@ This method helps locate the exact stage where the wrong value first appears.
 | Array sum          | Memory traversal and accumulation          |
 | GCD subtraction    | Branch-heavy loop execution                |
 | Maximum array      | Comparison and conditional update          |
-
----
-
-## 24. Final Verification Goal
-
-The processor is considered verified when:
-
-```text
-All testbenches compile without errors.
-All program tests print PASS.
-Register values match expected outputs.
-Memory values match expected outputs.
-Waveforms confirm correct pipeline movement.
-Forwarding, stalls, and flushes occur when expected.
-```
 
 The final result is a working 5-stage pipelined RV32I processor that can execute complete test programs correctly.
