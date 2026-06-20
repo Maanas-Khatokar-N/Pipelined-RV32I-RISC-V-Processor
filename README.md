@@ -2,16 +2,6 @@
 
 # 5-stage Pipelined RV32I RISC-V Processor
 
-<br>
-
-![Verilog](https://img.shields.io/badge/HDL-Verilog-1f6feb?style=for-the-badge)
-![RISC-V](https://img.shields.io/badge/ISA-RV32I-f97316?style=for-the-badge)
-![Pipeline](https://img.shields.io/badge/Pipeline-5%20Stage-22c55e?style=for-the-badge)
-![Icarus Verilog](https://img.shields.io/badge/Simulation-Icarus%20Verilog-8b5cf6?style=for-the-badge)
-![GTKWave](https://img.shields.io/badge/Waveform-GTKWave-64748b?style=for-the-badge)
-
-<br>
-
 </div>
 
 ---
