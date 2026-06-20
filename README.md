@@ -24,15 +24,15 @@ The design is verified using module-level testbenches, processor-level tests, ha
 
 <table>
 <tr>
-<td align="center"><b>IF</b><br><sub>Instruction Fetch</sub></td>
-<td align="center">→</td>
-<td align="center"><b>ID</b><br><sub>Instruction Decode</sub></td>
-<td align="center">→</td>
-<td align="center"><b>EX</b><br><sub>Execute</sub></td>
-<td align="center">→</td>
-<td align="center"><b>MEM</b><br><sub>Memory Access</sub></td>
-<td align="center">→</td>
-<td align="center"><b>WB</b><br><sub>Write Back</sub></td>
+<td align="center">🟦<br><b>IF</b><br><sub>Instruction Fetch</sub></td>
+<td align="center">➡️</td>
+<td align="center">🟩<br><b>ID</b><br><sub>Instruction Decode</sub></td>
+<td align="center">➡️</td>
+<td align="center">🟨<br><b>EX</b><br><sub>Execute</sub></td>
+<td align="center">➡️</td>
+<td align="center">🟧<br><b>MEM</b><br><sub>Memory Access</sub></td>
+<td align="center">➡️</td>
+<td align="center">🟥<br><b>WB</b><br><sub>Write Back</sub></td>
 </tr>
 </table>
 
@@ -40,34 +40,44 @@ The design is verified using module-level testbenches, processor-level tests, ha
 
 ```mermaid
 flowchart LR
-    PC[Program Counter] --> IF[IF Stage]
-    IF --> IFID[IF/ID Register]
-    IFID --> ID[ID Stage]
-    ID --> IDEX[ID/EX Register]
-    IDEX --> EX[EX Stage]
-    EX --> EXMEM[EX/MEM Register]
-    EXMEM --> MEM[MEM Stage]
-    MEM --> MEMWB[MEM/WB Register]
-    MEMWB --> WB[WB Stage]
-    WB -. Register Write Back .-> ID
+    PC[("🎯 Program Counter")] --> IF["🟦 IF Stage"]
+    IF --> IFID[/"IF/ID Register"/]
+    IFID --> ID["🟩 ID Stage"]
+    ID --> IDEX[/"ID/EX Register"/]
+    IDEX --> EX["🟨 EX Stage"]
+    EX --> EXMEM[/"EX/MEM Register"/]
+    EXMEM --> MEM["🟧 MEM Stage"]
+    MEM --> MEMWB[/"MEM/WB Register"/]
+    MEMWB --> WB["🟥 WB Stage"]
+    WB -. "Register Write Back" .-> ID
+
+    style PC fill:#1e1e2e,stroke:#89b4fa,stroke-width:2px,color:#fff
+    style IF fill:#1e3a5f,stroke:#74c7ec,stroke-width:2px,color:#fff
+    style ID fill:#1e4f3a,stroke:#a6e3a1,stroke-width:2px,color:#fff
+    style EX fill:#5f4f1e,stroke:#f9e2af,stroke-width:2px,color:#fff
+    style MEM fill:#5f3a1e,stroke:#fab387,stroke-width:2px,color:#fff
+    style WB fill:#5f1e2a,stroke:#f38ba8,stroke-width:2px,color:#fff
 ```
 
 <div align="center">
 
- 
-> Add architecture / datapath image here later
-> Suggested path: `docs/images/pipeline_datapath.png`
+<sub>📌 *Add architecture / datapath image here later — suggested path: `docs/images/pipeline_datapath.png`*</sub>
 
 </div>
 
-| Stage   | Role                                                                                     |
-| ------- | ---------------------------------------------------------------------------------------- |
-| **IF**  | Fetches instruction from instruction memory and computes the next PC                     |
-| **ID**  | Decodes instruction, reads registers, generates immediates and control signals           |
-| **EX**  | Performs ALU operations, branch comparison, target calculation, and forwarding selection |
-| **MEM** | Handles load and store operations through data memory                                    |
-| **WB**  | Writes ALU result, memory data, or return address back to the register file              |
+<br/>
 
+<div align="center">
+
+| Stage | Role |
+|:---:|:---|
+| 🟦 **IF** | Fetches instruction from instruction memory and computes the next PC |
+| 🟩 **ID** | Decodes instruction, reads registers, generates immediates and control signals |
+| 🟨 **EX** | Performs ALU operations, branch comparison, target calculation, and forwarding selection |
+| 🟧 **MEM** | Handles load and store operations through data memory |
+| 🟥 **WB** | Writes ALU result, memory data, or return address back to the register file |
+
+</div>
 ---
 
 ## Supported Instruction Subset
@@ -95,7 +105,7 @@ flowchart LR
 - Program-level verification using `.mem` files
 ---
 
-## Repository Structure
+## 📂 Repository Structure
 
 ```text
 Pipelined-RV32I-RISC-V-Processor/
@@ -184,29 +194,36 @@ Pipelined-RV32I-RISC-V-Processor/
 
 The RTL is divided into reusable core blocks and pipelined processor blocks.
 
-| Folder                         | Description                                               |
-| ------------------------------ | --------------------------------------------------------- |
-| `rtl/core/`                    | Common datapath and control modules used by the processor |
-| `rtl/pipeline/stages/`         | The five pipeline stage modules                           |
-| `rtl/pipeline/registers/`      | IF/ID, ID/EX, EX/MEM, and MEM/WB pipeline registers       |
-| `rtl/pipeline/hazard/`         | Forwarding and load-use hazard detection units            |
-| `rtl/pipeline/pipelined_top.v` | Top-level pipelined processor integration                 |
+<div align="center">
 
+| Folder | Description |
+|:---|:---|
+| 📁 `rtl/core/` | Common datapath and control modules used by the processor |
+| 📁 `rtl/pipeline/stages/` | The five pipeline stage modules |
+| 📁 `rtl/pipeline/registers/` | IF/ID, ID/EX, EX/MEM, and MEM/WB pipeline registers |
+| 📁 `rtl/pipeline/hazard/` | Forwarding and load-use hazard detection units |
+| 📄 `rtl/pipeline/pipelined_top.v` | Top-level pipelined processor integration |
+
+</div>
 ---
 
-## Documentation
+## 📚 Documentation
 
-Detailed design explanations available in the `docs/` folder.
+> [!NOTE]
+> Detailed design explanations are available in the `docs/` folder.
 
-| Document                    | Purpose                                                                 |
-| --------------------------- | ----------------------------------------------------------------------- |
-| `docs/architecture.md`      | Overall processor architecture and top-level datapath                   |
-| `docs/instruction_set.md`   | Supported RV32I subset, instruction formats, opcode/funct mapping       |
-| `docs/pipeline_design.md`   | Explanation of IF, ID, EX, MEM, WB stages and pipeline registers        |
-| `docs/hazard_forwarding.md` | Forwarding paths, load-use stall logic, branch/jump flushing            |
-| `docs/verification.md`      | Testbench strategy, program tests, expected outputs, waveform debugging |
-| `docs/images/`              | Datapath diagrams, pipeline diagrams, screenshots, and waveform images  |
+<div align="center">
 
+| Document | Purpose |
+|:---|:---|
+| 📘 `docs/architecture.md` | Overall processor architecture and top-level datapath |
+| 📗 `docs/instruction_set.md` | Supported RV32I subset, instruction formats, opcode/funct mapping |
+| 📙 `docs/pipeline_design.md` | Explanation of IF, ID, EX, MEM, WB stages and pipeline registers |
+| 📕 `docs/hazard_forwarding.md` | Forwarding paths, load-use stall logic, branch/jump flushing |
+| 📔 `docs/verification.md` | Testbench strategy, program tests, expected outputs, waveform debugging |
+| 🖼️ `docs/images/` | Datapath diagrams, pipeline diagrams, screenshots, and waveform images |
+
+</div>
 ---
 
 ## Datapath Summary
@@ -244,11 +261,11 @@ Detailed design explanations available in the `docs/` folder.
 ---
 
 
-## Pipeline Hazard Handling
+## 🚧 Pipeline Hazard Handling
 
 A pipelined processor must handle cases where instructions overlap and depend on each other. This design includes both **forwarding** and **stalling** mechanisms.
 
-### Data Forwarding
+### 🔁 Data Forwarding
 
 Forwarding is used when an instruction needs a value that has already been computed by an older instruction but has not yet reached the register file.
 
@@ -260,7 +277,7 @@ WB      →  ID
 
 This allows back-to-back dependent arithmetic instructions to execute correctly without unnecessary stalls.
 
-### Load-Use Hazard Stall
+### ⏸️ Load-Use Hazard Stall
 
 A load-use hazard occurs when an instruction immediately after `LW` depends on the loaded data.
 
@@ -271,13 +288,13 @@ add  x3, x1, x4
 
 Since load data becomes available only after the memory stage, the processor inserts one bubble by holding the PC and IF/ID register while flushing the ID/EX control signals.
 
-### Branch and Jump Flush
+### 🌊 Branch and Jump Flush
 
 For `BEQ`, `BNE`, and `JAL`, the processor flushes wrong-path instructions after a taken branch or jump. This prevents incorrectly fetched instructions from updating architectural state.
 
 ---
 
-## Memory Model
+## 💾 Memory Model
 
 The processor uses separate instruction and data memories.
 
@@ -300,12 +317,12 @@ Address 100 -> memory[25]
 Address 104 -> memory[26]
 ```
 
-This is useful while writing program testbenches and checking final memory outputs.
+<sub>This is useful while writing program testbenches and checking final memory outputs.
 
 ---
 
 
-## Verification
+## ✅ Verification
 
 The processor is verified through individual module tests, top-level processor tests, hazard-specific tests, and full program execution using `.mem` files.
 
@@ -342,7 +359,7 @@ The processor is verified through individual module tests, top-level processor t
 
 ---
 
-## Running the Project
+## 🚀 Running the Project
 
 ### Requirements
 
@@ -372,7 +389,7 @@ Give execute permission to the scripts:
 chmod +x sim/scripts/*.sh
 ```
 
-### Run Program Tests
+### ▶️ Run Program Tests
 
 | Test               | Command                                  |
 | ------------------ | ---------------------------------------- |
@@ -384,7 +401,9 @@ chmod +x sim/scripts/*.sh
 
 Each script compiles the RTL, runs the corresponding testbench, and prints the verification result in the terminal.
 
-### Run Core Testbenches
+<details>
+<summary><b>🧫 Run Core Testbenches (manual)</b></summary>
+<br/>
 
 To run a testbench from `tb/core/`, use:
 
@@ -400,7 +419,11 @@ tb/core/<testbench_name>.v
 vvp sim/build/<test_name>.vvp
 ```
 
-### Run Any Program Testbench Manually
+</details>
+
+<details>
+<summary><b>🧫 Run Any Program Testbench Manually</b></summary>
+<br/>
 
 To run any testbench from `tb/programs/`, use:
 
@@ -415,6 +438,10 @@ tb/programs/<program_testbench>.v
 
 vvp sim/build/<program_test>.vvp
 ```
+
+</details>
+
+<div align="center">
 
 
 <div align="center">
