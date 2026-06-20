@@ -1,8 +1,6 @@
 <div align="center">
 
-# RV32I Pipelined RISC-V Processor
-
-### A 5-stage pipelined 32-bit RISC-V processor designed in Verilog
+# 5-stage Pipelined RV32I RISC-V Processor
 
 <br>
 
@@ -14,19 +12,17 @@
 
 <br>
 
-**Instruction Fetch → Instruction Decode → Execute → Memory → Write Back**
-
 </div>
 
 ---
 
 ## About the Project
 
-This project implements a **5-stage pipelined RV32I RISC-V processor** in Verilog.
+This project is a Verilog implementation of an **5-stage pipelined RV32I RISC-V processor** featuring both a **single-cycle processor** and a **5-stage pipelined processor**.
 
-The design began as a single-cycle RV32I processor and was later extended into a clean pipelined architecture with separate pipeline stages, inter-stage registers, forwarding logic, load-use hazard detection, branch flushing, memory access, and program-level verification.
+The pipelined processor is organized into separate IF, ID, EX, MEM, and WB stages with dedicated inter-stage pipeline registers. It supports forwarding, load-use hazard stalling, branch/jump flushing, ALU control, register file operations, and instruction/data memory access.
 
-The processor supports a practical subset of the RV32I base integer instruction set and is verified using both module-level testbenches and complete program simulations such as Fibonacci, array sum, GCD, maximum array element, and forwarding stress tests.
+The design is verified using module-level testbenches, processor-level tests, hazard-specific tests, and complete .mem program simulations.
 
 ---
 
@@ -66,8 +62,6 @@ The processor is organized around the classic RISC pipeline.
 | **Comparison**    | `SLT`                             |
 | **Memory**        | `LW`, `SW`                        |
 | **Branch / Jump** | `BEQ`, `BNE`, `JAL`               |
-
-The instruction subset is intentionally focused on the core instructions required to demonstrate datapath design, control generation, memory operations, control flow, forwarding, and hazard handling.
 
 ---
 
@@ -182,7 +176,7 @@ Pipelined-RV32I-RISC-V-Processor/
 │   │   ├── pipelined_top_tb.v
 │   │   ├── pipelined_top_forwarding_tb.v
 │   │   ├── pipelined_top_load_use_hazard_tb.v
-│   │   ├── program_counter.v
+│   │   ├── program_counter_tb.v
 │   │   ├── register_file_tb.v
 │   │   └── single_cycle_top_tb.v
 │   │
