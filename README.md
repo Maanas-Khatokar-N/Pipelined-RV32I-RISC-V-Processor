@@ -78,9 +78,13 @@ flowchart LR
 | 🟥 **WB** | Writes ALU result, memory data, or return address back to the register file |
 
 </div>
+
+
 ---
 
 ## Supported Instruction Subset
+
+<div align="center">
 
 | Type   | Instructions                            |
 | ------ | --------------------------------------- |
@@ -90,6 +94,7 @@ flowchart LR
 | B-Type | `BEQ`, `BNE`                            |
 | J-Type | `JAL`                                   |
 
+</div>
 ---
 
 ## Implementation Highlights
@@ -205,6 +210,8 @@ The RTL is divided into reusable core blocks and pipelined processor blocks.
 | 📄 `rtl/pipeline/pipelined_top.v` | Top-level pipelined processor integration |
 
 </div>
+
+
 ---
 
 ## 📚 Documentation
@@ -349,6 +356,8 @@ The processor is verified through individual module tests, top-level processor t
 
 ## Program Tests
 
+<div align="center">
+
 | Program                 | What it verifies                                          |
 | ----------------------- | --------------------------------------------------------- |
 | `fibonacci.mem`         | Loop execution, arithmetic, memory access, branch control |
@@ -356,6 +365,8 @@ The processor is verified through individual module tests, top-level processor t
 | `gcd_subtraction.mem`   | Branch-heavy loop execution                               |
 | `max_array.mem`         | Comparisons, memory reads, conditional updates            |
 | `forwarding_stress.mem` | Back-to-back dependencies and forwarding paths            |
+
+</div>
 
 ---
 
@@ -402,7 +413,7 @@ chmod +x sim/scripts/*.sh
 Each script compiles the RTL, runs the corresponding testbench, and prints the verification result in the terminal.
 
 <details>
-<summary><b>🧫 Run Core Testbenches (manual)</b></summary>
+<summary><b>🧫 Run Core Testbenches Manually</b></summary>
 <br/>
 
 To run a testbench from `tb/core/`, use:
@@ -441,7 +452,6 @@ vvp sim/build/<program_test>.vvp
 
 </details>
 
-<div align="center">
 
 
 <div align="center">
