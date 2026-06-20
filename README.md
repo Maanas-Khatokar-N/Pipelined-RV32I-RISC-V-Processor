@@ -4,8 +4,6 @@
 
 </div>
 
----
-
 ## About the Project
 
 This project is a Verilog implementation of an **RV32I RISC-V processor**, featuring both a **single-cycle design** and a **5-stage pipelined design**.
