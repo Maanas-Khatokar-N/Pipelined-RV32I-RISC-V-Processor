@@ -227,7 +227,8 @@ The RTL is divided into reusable core blocks and pipelined processor blocks.
 > [!NOTE]
 > Detailed design explanations are available in the `docs/` folder.
 
-```html
+
+<div align="center">
 
 | Document | Purpose |
 |:---|:---|
@@ -238,7 +239,7 @@ The RTL is divided into reusable core blocks and pipelined processor blocks.
 | 📔 [`docs/verification.md`](docs/verification.md) | Testbench strategy, program tests, expected outputs, waveform debugging |
 | 🖼️ [`docs/img/`](docs/img/) | Datapath diagrams, pipeline diagrams, screenshots, and waveform images |
 
-```
+</div>
 
 ---
 
