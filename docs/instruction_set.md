@@ -100,7 +100,7 @@ R-type instructions operate on two source registers and write the result to one 
 | `add rd, rs1, rs2` | `rd = rs1 + rs2`             | `0110011` | `000`     | `0000000` |
 | `sub rd, rs1, rs2` | `rd = rs1 - rs2`             | `0110011` | `000`     | `0100000` |
 | `and rd, rs1, rs2` | `rd = rs1 & rs2`             | `0110011` | `111`     | `0000000` |
-| `or rd, rs1, rs2`  | `rd = rs1 &#124; rs2`        | `0110011` | `110`     | `0000000` |
+| `or rd, rs1, rs2`  | `rd = rs1 \| rs2`        | `0110011` | `110`     | `0000000` |
 | `xor rd, rs1, rs2` | `rd = rs1 ^ rs2`             | `0110011` | `100`     | `0000000` |
 | `slt rd, rs1, rs2` | `rd = 1 if rs1 < rs2 else 0` | `0110011` | `010`     | `0000000` |
 
