@@ -4,10 +4,6 @@
 
 </div>
 
----
-
-## Overview
-
 This project is a Verilog implementation of an **RV32I RISC-V processor**, featuring both a **single-cycle design** and a **5-stage pipelined design**.
 
 The pipelined processor is organized into IF, ID, EX, MEM, and WB stages with dedicated pipeline registers. It supports forwarding, load-use hazard stalling, branch/jump flushing, ALU control, register file operations, and instruction/data memory access.
