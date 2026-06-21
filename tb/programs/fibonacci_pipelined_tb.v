@@ -17,6 +17,28 @@ module fibonacci_pipelined_tb;
         .rst(rst)
     );
 
+    // ================= DEBUG WIRES FOR GTKWave =================
+
+    // Main pipeline view
+    wire [31:0] dbg_pc        = dut.IF.pc;
+    wire [31:0] dbg_inst      = dut.IF.inst;
+
+    // Important Fibonacci registers
+    wire [31:0] dbg_x1_count  = dut.ID.rf.registers[1];
+    wire [31:0] dbg_x2_result = dut.ID.rf.registers[2];
+    wire [31:0] dbg_x3_next   = dut.ID.rf.registers[3];
+    wire [31:0] dbg_x4_temp   = dut.ID.rf.registers[4];
+    wire [31:0] dbg_x10_base  = dut.ID.rf.registers[10];
+
+    // Important data memory locations
+    wire [31:0] dbg_input_N   = dut.MEM.dm.memory[10];
+    wire [31:0] dbg_fib_out   = dut.MEM.dm.memory[11];
+
+    // Optional WB view
+    wire        dbg_RegWrite  = dut.MEM_WB.RegWrite_out;
+    wire [4:0]  dbg_wb_rd     = dut.MEM_WB.rd_out;
+    wire [31:0] dbg_wb_data   = dut.WB.wb_write_data;
+
     always #5 clk = ~clk;
 
     initial begin
