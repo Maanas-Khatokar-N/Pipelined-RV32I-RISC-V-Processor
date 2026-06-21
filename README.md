@@ -466,10 +466,17 @@ vvp sim/build/<program_test>.vvp
 
 <div align="center">
 
-<!-- 
-> Add waveform screenshot here later
-> Suggested path: `docs/images/waveforms/pipeline_waveform.png`
--->
+## Fibonacci Program Verification
+
+The Fibonacci program was executed on the pipelined RV32I processor and verified using GTKWave.
+
+<p align="center">
+  <img src="docs/images/fibonacci_waveform.png" width="900">
+</p>
+
+<p align="center">
+  <em>Figure: Fibonacci program execution waveform with input N = 7.</em>
+</p>
 
 </div>
 
