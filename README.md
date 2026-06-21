@@ -378,6 +378,18 @@ The processor is verified through individual module tests, top-level processor t
 
 </div>
 
+## Fibonacci Program Verification
+
+The Fibonacci program was executed on the pipelined RV32I processor and verified using GTKWave.
+
+<p align="center">
+  <img src="docs/img/fibonacci_waveform.png" width="900">
+</p>
+
+<p align="center">
+  <em>Figure: Fibonacci program execution waveform with input N = 7.</em>
+</p>
+
 ---
 
 ## 🚀 Running the Project
@@ -461,24 +473,6 @@ vvp sim/build/<program_test>.vvp
 ```
 
 </details>
-
-
-
-<div align="center">
-
-## Fibonacci Program Verification
-
-The Fibonacci program was executed on the pipelined RV32I processor and verified using GTKWave.
-
-<p align="center">
-  <img src="docs/images/fibonacci_waveform.png" width="900">
-</p>
-
-<p align="center">
-  <em>Figure: Fibonacci program execution waveform with input N = 7.</em>
-</p>
-
-</div>
 
 ---
 
